@@ -15,20 +15,28 @@ It is a **notebook + 2D saddle**, not PSCF, not a CD-SEM, and not Zhou’s 3D in
 
 ## Run locally
 
-Needs **Node.js 22.18+** ([nodejs.org](https://nodejs.org)).
-
-**Windows:** clone, then double-click `Start DSA Bench.cmd`.
-
-**Any OS:**
+Requires **Node.js 22.18+ (22.x) or 24+** with npm.
 
 ```sh
-npm install
-npx vite dev --host 127.0.0.1 --port 8080
+npm ci
+npm run dev
 ```
 
-Open [http://localhost:8080](http://localhost:8080). Leave the terminal open.
+Open http://127.0.0.1:8080 and leave the terminal open. Press Ctrl+C to stop.
+In PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`.
+Restart VS Code after installing Node.js so its terminal gets the updated PATH.
 
-If `npm run dev` says `spawn vite ENOENT`, use the `npx vite` line above.
+On Windows, you can also double-click **Start DSA Bench.cmd**. This installs
+dependencies if needed, starts a hidden local server, and opens the browser.
+Use `npm run dev` when you want a visible terminal and an easy way to stop it.
+
+This is a standalone React + Vite app. Simulations run in browser workers;
+recipes use browser localStorage. No account, database, platform service,
+or environment file is needed. Keep `package-lock.json` in Git; `node_modules/`
+is installed locally and excluded from Git.
+
+`npm run build` produces a static site in `dist/`. Use `npm run preview` to
+check that build at http://127.0.0.1:8081.
 
 ## How to use it
 

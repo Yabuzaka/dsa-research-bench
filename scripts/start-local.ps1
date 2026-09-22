@@ -24,7 +24,7 @@ try {
         $benchOutLog = Join-Path $benchLogs 'server.log'
         $benchErrorLog = Join-Path $benchLogs 'server-error.log'
         $benchProcess = Start-Process -FilePath $nodeCommand `
-            -ArgumentList @('scripts/with-app-env.mjs', 'vite', 'dev', '--host', '127.0.0.1', '--port', '8080') `
+            -ArgumentList @('node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', '8080', '--strictPort') `
             -WorkingDirectory $benchRoot -WindowStyle Hidden -PassThru `
             -RedirectStandardOutput $benchOutLog -RedirectStandardError $benchErrorLog
         Write-Host 'Starting DSA Research Bench...'

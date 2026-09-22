@@ -4,41 +4,37 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/with-app-env.mjs vite dev --host 127.0.0.1 --port 8080",
-    "build": "node scripts/with-app-env.mjs vite build && npm run db:migrate",
-    "db:migrate": "node scripts/migrate.mjs",
+    "dev": "vite --host 127.0.0.1 --port 8080 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 8081 --strictPort",
     "typecheck": "tsc --noEmit",
+    "test": "npm run test:science",
     "test:science": "node --experimental-strip-types --test src/lib/dsa/dsa.test.ts src/lib/dsa/gp.test.ts src/lib/dsa/inverse.test.ts src/lib/dsa/inverse-export.test.ts src/lib/dsa/guides.test.ts src/lib/tmd/tmd.test.ts src/lib/dsa/scft-cell.test.ts"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.5.4",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@fontsource/ibm-plex-sans": "^5.3.0",
     "@fontsource/syne": "^5.3.0",
     "@radix-ui/react-slot": "^1.2.4",
-    "@tailwindcss/vite": "^4.3.0",
-    "@tanstack/react-query": "^5.101.0",
-    "@tanstack/react-router": "^1.170.0",
-    "@tanstack/react-start": "^1.168.0",
-    "@tanstack/router-plugin": "^1.168.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.510.0",
-    "pg": "^8.16.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^2.13.0",
-    "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^4.3.0",
-    "zod": "^4.4.0"
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.2.0",
-    "nitro": "3.0.260610-beta",
     "typescript": "^5.7.0",
-    "vite": "^8.2.0"
+    "vite": "^8.2.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24.0.0"
   }
 }
