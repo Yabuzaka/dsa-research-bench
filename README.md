@@ -88,3 +88,9 @@ Use and modify for research. Cite Matsen 1996, imec P24 (Vallat SPIE 2026), and 
 - Matsen & Schick, *Phys. Rev. Lett.* **72**, 2660 (1994); Matsen, *J. Chem. Phys.* (1996) — 1D diblock SCFT / *D\**.
 - Vallat et al., SPIE 13982-23 — imec P24 after-etch LER/LWR.
 - Zhou et al., [arXiv:2510.02715](https://arxiv.org/abs/2510.02715) — inverse-design *inspiration only*.
+
+## Contributors
+Spidel- Coauthor.
+Yabuzaka - Coauthor.
+Pedropauloc - Coauthor.
+
