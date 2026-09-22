@@ -1,0 +1,15 @@
+export const GLOSSARY: { term: string; def: string }[] = [
+  { term: "λ, natural length", def: "Electrostatic scaling length. Short-channel effects explode when L_g ≲ few × λ." },
+  { term: "SS", def: "Subthreshold swing, mV/decade of drain current. Floor 60 mV/dec at 300 K for a Boltzmann FET." },
+  { term: "EOT", def: "Equivalent oxide thickness. Cox = 3.9 ε0 / EOT." },
+  { term: "Dit", def: "Interface trap density, cm⁻² eV⁻¹. Adds to the n-factor: n = 1 + Cit/Cox + SCE." },
+  { term: "Rc", def: "Contact resistivity × width, Ω·µm. Two contacts add 2 Rc / W to the device." },
+  { term: "GAA", def: "Gate-all-around. n = 4 in the λ sketch used here (vs 1 SG, 2 DG)." },
+  { term: "CFET", def: "Complementary FET: stacked n and p nanosheets. A TMD sheet is a candidate body in each stack." },
+  { term: "2H", def: "Hexagonal semiconducting polytype of MX₂. 1T/1T′ are metallic / semi-metallic." },
+  { term: "SBH", def: "Schottky barrier height at the metal–TMD interface. Pinned, not equal to work-function difference." },
+  { term: "I_on / I_off", def: "Drive vs leakage at a given Vdd. HP targets ~10⁴–10⁶; LP wants I_off ~ pA/µm." },
+  { term: "Nanoribbon", def: "Width-scaled TMD channel (~30–40 nm). Edges help gating and side injection if they stay clean." },
+  { term: "Hybrid contact", def: "Top + edge injection into the TMD. Phys. Rev. Applied 2026: best of the three geometries below 10 nm L_c, near the quantum-limit Rc at n > 10¹³ cm⁻²." },
+  { term: "L_c", def: "Contact length along the channel. TSMC 2025 Sb/MoS₂: I_on independent of L_c down to ~30 nm." },
+];

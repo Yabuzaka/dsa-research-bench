@@ -1,4 +1,4 @@
-/** In-place radix-2 Cooley-Tukey FFT. n must be a power of two. */
+/** In-place radix-2 Cooley–Tukey FFT. n must be a power of two. */
 
 export type FftArray = Float32Array | Float64Array;
 
@@ -81,6 +81,7 @@ export function fft2d(re: FftArray, im: FftArray, nx: number, ny: number, invert
   for (let x = 0; x < nx; x++) fft1d(re, im, ny, x, nx, invert);
 }
 
+/** In-place 3D FFT, all sizes powers of two. Layout: i = ((z * ny) + y) * nx + x */
 export function fft3d(
   re: FftArray,
   im: FftArray,

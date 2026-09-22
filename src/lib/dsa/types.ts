@@ -6,6 +6,7 @@ export type GuideKind =
   | "fin-array"
   | "none";
 
+/** Template imperfections used by sequential energy-pathway analysis (ACS 2026). */
 export type TemplateDefect =
   | "none"
   | "missing-stripe"
@@ -15,26 +16,42 @@ export type TemplateDefect =
   | "stitch";
 
 export type BlendPath = "quench" | "anneal";
+
 export type MorphClass = "LAM" | "HEX" | "DIS" | "MIX";
 
 export type GuideConfig = {
   kind: GuideKind;
+  /** Guide pitch Ls, nm. For chemo, typically n × L0. */
   LsNm: number;
+  /** Stripe / trench duty (0–1). LiNe ~ 0.5 × L0 / Ls. */
   duty: number;
+  /** Absolute guide CD, nm. If > 0, overrides duty as CD/Ls. */
   cdNm: number;
+  /** Wetting: +1 pins A (φ=+1), −1 pins B. */
   wetting: number;
+  /** Field strength h0. 0.4–2 typical. */
   strength: number;
+  /** Grapho wall thickness in nm. */
   wallNm: number;
+  /** Contact hole diameter, nm. */
   holeNm: number;
+  /** Rotation of stripes, radians. */
   angle: number;
+  /** Rigid overlay of the chemical pattern, nm. */
   overlayNm: number;
+  /**
+   * Gaussian contour threshold τ for via-pair peanuts
+   * (Zhou et al. arXiv:2510.02715). Manufacturable τ ≳ 0.35.
+   */
   tau: number;
+  /** Hole–hole spacing inside a via-pair, nm. */
   pairNm: number;
 };
 
 export type SimConfig = {
   nx: number;
   ny: number;
+  /** Pixel size, nm. */
   dxNm: number;
   chiN: number;
   f: number;
@@ -45,16 +62,27 @@ export type SimConfig = {
   T: number;
   seed: number;
   guide: GuideConfig;
+  /** EUV prepattern 3σ LER, nm (stochastic guides). */
   euvLerNm: number;
+  /** EUV CD jitter 3σ, nm. */
   euvCdJitterNm: number;
+  /** Neutral-layer / free-surface energy mismatch (parallel-orientation risk). */
   deltaGamma: number;
+  /** Film thickness in units of L0. >3 traps buried defects (Chen–Nealey). */
   tFilmOverL0: number;
+  /** Microwave anneal mobility multiplier. 1 = thermal only. */
   microwave: number;
+  /** EUV dose, mJ/cm². 0 = manual LER; >0 drives stochastic LER. */
   euvDose: number;
+  /** Volume fraction of a shorter second diblock (binary blend). */
   blendFrac: number;
+  /** Process path for the blend (Macromolecules 2025). */
   blendPath: BlendPath;
+  /** Second-stage anneal temperature, K. 0 = isothermal. */
   T2: number;
+  /** Switch time into T2 (two-step: high-T heal, low-T sharpen). */
   tSwitch: number;
+  /** Injected template defect for repairability studies. */
   templateDefect: TemplateDefect;
 };
 
@@ -115,6 +143,7 @@ export type Metrics = {
 };
 
 export type PsdBin = { k: number; psd: number; k2?: number; k4?: number };
+
 export type HoleMarker = { x: number; y: number; cd: number };
 export type LineCut = { x: number; phi: number; tanh?: number };
 export type EdgePt = { x: number; y: number };
