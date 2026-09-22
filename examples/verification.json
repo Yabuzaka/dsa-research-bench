@@ -1,0 +1,38 @@
+[
+  {
+    "mode": "lamellar",
+    "initialLoss": 0.4474669158745775,
+    "bestLoss": 0.20069629137007353,
+    "gainPercent": 55.148350805374946,
+    "residual": 0.00042861145671962514,
+    "incomp": 0.0004117496331880406,
+    "converged": true,
+    "cdNm": 12.762868938578151,
+    "status": "converged",
+    "seconds": 8.6375412
+  },
+  {
+    "mode": "holes",
+    "initialLoss": 2.233805813181786,
+    "bestLoss": 0.9793159789497026,
+    "gainPercent": 56.159305649098236,
+    "residual": 0.04977527655228966,
+    "incomp": 0.0021816715487121036,
+    "converged": false,
+    "cdNm": 16.86462484774605,
+    "status": "unconverged",
+    "seconds": 9.046609400000001
+  },
+  {
+    "mode": "via-pair",
+    "initialLoss": 1.4393190229867248,
+    "bestLoss": 1.3878913105606192,
+    "gainPercent": 3.5730586204153814,
+    "residual": 0.27338740767451913,
+    "incomp": 0.01634487811255807,
+    "converged": false,
+    "cdNm": 16.358953076310218,
+    "status": "unconverged",
+    "seconds": 10.4794025
+  }
+]
