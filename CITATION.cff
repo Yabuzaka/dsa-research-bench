@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: "DSA Research Bench"
+abstract: "Browser-based simulator for directed self-assembly lithography (Ohta-Kawasaki kinetics, spectral SCFT, Gaussian-process inverse design) with a compact 2D TMD transistor model."
+type: software
+repository-code: "https://github.com/Yabuzaka/dsa-research-bench"
+authors:
+  - given-names: "Sebastian"
+    family-names: "Pina Delgado"
+  - alias: "Yabuzaka"
+  - alias: "pedropauloc"
+keywords:
+  - directed self-assembly
+  - block copolymers
+  - self-consistent field theory
+  - lithography
+  - Bayesian optimization

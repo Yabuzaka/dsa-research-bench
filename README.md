@@ -1,96 +1,122 @@
+<p align="center">
+  <img src="public/og.jpg" alt="DSA Research Bench" width="720">
+</p>
+
+<p align="center">
+  <a href="https://github.com/Yabuzaka/dsa-research-bench/actions/workflows/ci.yml"><img src="https://github.com/Yabuzaka/dsa-research-bench/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/node-22.18%2B%20%7C%2024%2B-339933.svg" alt="Node 22.18+ or 24+">
+</p>
+
 # DSA Research Bench
 
-Local browser workbench for **directed self-assembly (DSA)** lithography and a separate **2D TMD FET** calculator. Nothing is sent off the machine. Recipes save in the browser under `dsa-bench-local-v8`.
+A browser-based simulator for **directed self-assembly (DSA) lithography**, with a separate compact model for **2D-semiconductor (TMD) transistors**. Everything runs locally in the browser; no data leaves the machine.
 
-It is a **notebook + 2D saddle**, not PSCF, not a CD-SEM, and not Zhou’s 3D inverse loop.
+**Why it matters.** Optical lithography struggles to print features much smaller than about 20 nm. Block copolymers, long molecules made of two chemically different blocks, spontaneously separate into regular stripes or dots a few nanometres wide. A coarse lithographic "guide" pattern can steer them into place and multiply its density two to seven times. This bench lets you load recipes that have already worked on real wafers, simulate how the polymer film orders, check whether it has reached equilibrium, and export the numbers.
 
-## What it does
+<!-- Add a screenshot of the Chamber view here once available:
+<p align="center"><img src="docs/chamber.png" alt="Chamber view" width="820"></p>
+-->
 
-- Load a published wafer recipe (imec P24, Maekawa PGFM, LiNe 2×, microwave 4×, …).
-- **Anneal** the polymer field (Ohta–Kawasaki / Model B) and watch CD, LER, defects, and order.
-- **SCFT relax** to an equilibrium density: *F*, residual, *D\** vs Matsen 1996.
-- Download **SI** JSON/CSV for a supporting-information table.
-- Screen a process **Window**, test template **Repair** (SEPA), run **Inverse** (GP-BO on 2D SCFT).
-- Optionally size a **2D TMD FET** against IRDS.
+## Features
 
-## Run locally
+- **Published recipes.** Notes holds only recipes demonstrated on real wafers (imec P24, Maekawa PGFM, LiNe 2× and 3×, microwave 4×, and others), each loadable into the simulator.
+- **Kinetics.** Ohta–Kawasaki / Model B annealing shows defects, roughness (LER) and ordering developing over time.
+- **Equilibrium.** A spectral self-consistent field theory (SCFT) solver relaxes the film and reports free energy, residuals and the equilibrium period D* compared with Matsen's reference values.
+- **Export.** Supporting-information tables (JSON/CSV) with every number needed to reproduce a result.
+- **Screening tools.** Process-window maps, template repair (SEPA), and inverse design by Bayesian optimisation over 2D SCFT.
+- **2D FET lab.** A compact electrostatic model for MoS₂-class transistors, benchmarked against IRDS targets and kept separate from the polymer solver.
 
-Requires **Node.js 22.18+ (22.x) or 24+** with npm.
+## Engineering
+
+The numerical core is written from scratch in TypeScript, with no numerical libraries (about 13,000 lines across solvers, tests and UI).
+
+| Component | Implementation |
+|---|---|
+| FFT | In-place radix-2 Cooley–Tukey (`src/lib/dsa/fft.ts`) |
+| SCFT | Split-step Fourier solution of the modified diffusion equation, Anderson mixing, χN continuation, commensurate cells (`scft.ts`) |
+| Kinetics | Spectral Ohta–Kawasaki / Model B (`ok-solver.ts`) |
+| Inverse design | Latin-hypercube seeding, then a Matérn-5/2 Gaussian process with Cholesky factorisation and expected improvement (`gp.ts`, `inverse.ts`) |
+| Concurrency | Simulations and optimisation run in Web Workers, so the UI stays responsive |
+| App | React, Vite, Tailwind |
+
+## Quick start
+
+Requires **Node.js 22.18+ (22.x) or 24+**.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:8080 and leave the terminal open. Press Ctrl+C to stop.
-In PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`.
-Restart VS Code after installing Node.js so its terminal gets the updated PATH.
+Open <http://127.0.0.1:8080>. On Windows you can instead double-click **`Start DSA Bench.cmd`**, which installs dependencies if needed and opens the browser.
 
-On Windows, you can also double-click **Start DSA Bench.cmd**. This installs
-dependencies if needed, starts a hidden local server, and opens the browser.
-Use `npm run dev` when you want a visible terminal and an easy way to stop it.
+`npm run build` produces a static site in `dist/`; `npm run preview` serves it at <http://127.0.0.1:8081>.
 
-This is a standalone React + Vite app. Simulations run in browser workers;
-recipes use browser localStorage. No account, database, platform service,
-or environment file is needed. Keep `package-lock.json` in Git; `node_modules/`
-is installed locally and excluded from Git.
+## Typical session
 
-`npm run build` produces a static site in `dist/`. Use `npm run preview` to
-check that build at http://127.0.0.1:8081.
+1. Turn **Help on** (top bar) and hover any control for a one-line explanation.
+2. Open **Notes** and load a published recipe, or start from the default **LiNe 2×** in **Chamber**.
+3. Press **Anneal** until the stripes register with the guide, then press **SCFT relax**.
+4. Check that the relax status reads **saddle**, not **open**, before using the numbers.
+5. Press **SI** to download the free energy, residuals and D* as JSON/CSV.
 
-## How to use it
+## Validation
 
-1. Turn **Help on** (top bar) and hover any control.
-2. **Notes** → Load a published wafer win, or start from **LiNe 2×** in Chamber.
-3. **Anneal** until stripes register, then **SCFT relax**.
-4. **SI** — save *F*, residual, *D\** vs Matsen. Cite the residual.
-5. Optional: **Window**, **Repair**, **Inverse** (screening). Apply inverse results back to Chamber.
-6. **2D FET** is a separate compact transistor lab, not mixed into the polymer solver.
+Measured with `npm run test:science` and direct solver runs (full details and how to reproduce them in [`docs/VALIDATION.md`](docs/VALIDATION.md)).
 
-### Inverse (honest scope)
+| Check | Result | Status |
+|---|---|---|
+| Science test suite | 94 / 94 passing | ✅ |
+| 1D lamellar, χN = 20, f = 0.5: free energy | F/nkT = 3.985 | ✅ converged (‖w − w[φ]‖ = 7.6×10⁻⁵) |
+| 1D equilibrium period from F(D) minimisation | D*/Rg = 4.043 vs 4.044 (Matsen & Bates 1996) | ✅ 0.02 % |
+| 2D LiNe 2× (64², Ns = 56, 160 iterations) | F = 3.845, ΔF vs 1D = +0.006, registration 23 % | ⚠️ field residual 5.8×10⁻³, above the 5×10⁻³ saddle threshold |
+| Inverse design, lines (seed 17, 16 evaluations) | loss −55 %; CD 12.8 nm vs 14 nm target | ✅ converged, target not fully met |
+| Inverse design, contacts / vias | loss −56 % / −4 % | ⚠️ unconverged, screening only |
 
-Latin hypercube, then Matérn-5/2 GP + expected improvement. **Every** trial is scored with the same 2D SCFT (`gp-ei-scft2d`). Inspired by Zhou — **not** their blend / 3D loop. Unconverged trials are guesses. Lower loss ≠ the CD was hit.
+Reproducible inverse runs are in [`examples/`](examples/).
 
-## Map
+## What you can cite vs. what is screening
 
-| Place | Purpose |
-|---|---|
-| Chamber | Live field, recipes, anneal, SCFT, SI, looks |
-| Notes | Published successful wafers only. Load → Chamber |
-| Window | CD / χN / overlay maps (screening) |
-| Repair | SEPA: missing stripe / stitch |
-| Inverse | GP-BO on 2D SCFT |
-| Model | Hamiltonian, residual, validity |
-| 2D FET / Materials | Compact TMD transistor |
+**Cite, with the residual you printed:** 1D SCFT at χN ≲ 30 and SI tables from runs whose status reads *saddle*.
 
-## What you may cite vs screening
+**Screening only:** inverse design (especially contacts and vias), process windows, repair, 3D film, χN ≫ 30, the TMD compact model, and any 2D run whose status reads *open*.
 
-**Methods-grade (with the residual you printed):** 1D Matsen χ*N*=20, 2D LiNe/hex at χ*N* ≲ 30, SI table.
+The AFM / TEM / SEM view buttons only change how the field is coloured. They are not a microscope or metrology model. This bench is not PSCF, not a CD-SEM model, and does not reproduce the blend / 3D inverse loop of Zhou et al.
 
-**Screening only:** inverse (especially contacts/vias), Window, Repair, 3D film, colored “SEM” look, χ*N* ≫ 30, TMD compact model.
+## Project structure
 
-Colored AFM / TEM / SEM buttons change appearance. They are not a microscope.
-
-## Checks
-
-```sh
-npm run typecheck
-npm run test:science
-npm run build
+```
+src/lib/dsa/      polymer physics: SCFT, kinetics, inverse design, recipes, tests
+src/lib/tmd/      2D transistor compact model and tests
+src/components/   UI panels (Chamber, Notes, Window, Repair, Inverse, Model, 2D FET)
+examples/         reproducible inverse-design runs (seed 17)
+docs/             validation report
 ```
 
-## License
+## Development
 
-Use and modify for research. Cite Matsen 1996, imec P24 (Vallat SPIE 2026), and any Notes recipe you load.
+```sh
+npm run typecheck      # TypeScript
+npm run test:science   # physics and optimiser regression tests
+npm run build          # production build
+```
+
+## Contributors
+
+- **Sebastian Pina Delgado** ([@sebastpina](https://github.com/sebastpina))
+- [@Yabuzaka](https://github.com/Yabuzaka)
+- [@pedropauloc](https://github.com/pedropauloc)
+
+## Citing
+
+If you use this bench in academic work, please cite it using the metadata in [`CITATION.cff`](CITATION.cff) (GitHub's "Cite this repository" button), together with the original papers for any recipe or reference value you rely on.
 
 ## References
 
-- Matsen & Schick, *Phys. Rev. Lett.* **72**, 2660 (1994); Matsen, *J. Chem. Phys.* (1996) — 1D diblock SCFT / *D\**.
-- Vallat et al., SPIE 13982-23 — imec P24 after-etch LER/LWR.
-- Zhou et al., [arXiv:2510.02715](https://arxiv.org/abs/2510.02715) — inverse-design *inspiration only*.
+- M. W. Matsen & M. Schick, *Phys. Rev. Lett.* **72**, 2660 (1994): diblock copolymer SCFT.
+- M. W. Matsen & F. S. Bates, *Macromolecules* **29**, 1091 (1996): lamellar period used as the D* reference.
+- Vallat et al., SPIE 13982-23 (2026): imec P24 after-etch LER/LWR.
+- Zhou et al., [arXiv:2510.02715](https://arxiv.org/abs/2510.02715) (2025): inverse-design inspiration only.
+- Snoek, Larochelle & Adams, [NeurIPS 2012](https://proceedings.neurips.cc/paper/2012/hash/05311655a15b75fab86956663e1819cd-Abstract.html): practical Bayesian optimisation.
 
-## Contributors
-Spidel- Coauthor.
-Yabuzaka - Coauthor.
-Pedropauloc - Coauthor.
-
+Each recipe in **Notes** lists its own publication.
