@@ -3,6 +3,7 @@ message: "If you use this software, please cite it using these metadata."
 title: "DSA Research Bench"
 abstract: "Browser-based simulator for directed self-assembly lithography (Ohta-Kawasaki kinetics, spectral SCFT, Gaussian-process inverse design) with a compact 2D TMD transistor model."
 type: software
+license: MIT
 repository-code: "https://github.com/Yabuzaka/dsa-research-bench"
 authors:
   - given-names: "Sebastian"

@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/Yabuzaka/dsa-research-bench/actions/workflows/ci.yml"><img src="https://github.com/Yabuzaka/dsa-research-bench/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license">
   <img src="https://img.shields.io/badge/node-22.18%2B%20%7C%2024%2B-339933.svg" alt="Node 22.18+ or 24+">
 </p>
 
@@ -69,7 +70,8 @@ Measured with `npm run test:science` and direct solver runs (full details and ho
 | Science test suite | 94 / 94 passing | ✅ |
 | 1D lamellar, χN = 20, f = 0.5: free energy | F/nkT = 3.985 | ✅ converged (‖w − w[φ]‖ = 7.6×10⁻⁵) |
 | 1D equilibrium period from F(D) minimisation | D*/Rg = 4.043 vs 4.044 (Matsen & Bates 1996) | ✅ 0.02 % |
-| 2D LiNe 2× (64², Ns = 56, 160 iterations) | F = 3.845, ΔF vs 1D = +0.006, registration 23 % | ⚠️ field residual 5.8×10⁻³, above the 5×10⁻³ saddle threshold |
+| 2D SCFT relax, default LiNe 2× recipe | F = 3.845, ΔF vs 1D = +0.006, registration 23 % | ✅ converged (‖w − w[φ]‖ = 1.1×10⁻⁴) |
+| 2D SCFT relax, other 17 Chamber recipes | 1 unguided reference converges; 16 stop at the iteration cap | ⚠️ not converged, screening only |
 | Inverse design, lines (seed 17, 16 evaluations) | loss −55 %; CD 12.8 nm vs 14 nm target | ✅ converged, target not fully met |
 | Inverse design, contacts / vias | loss −56 % / −4 % | ⚠️ unconverged, screening only |
 
@@ -77,9 +79,9 @@ Reproducible inverse runs are in [`examples/`](examples/).
 
 ## What you can cite vs. what is screening
 
-**Cite, with the residual you printed:** 1D SCFT at χN ≲ 30 and SI tables from runs whose status reads *saddle*.
+**Cite, with the residual you printed:** 1D SCFT at χN ≲ 30, the default LiNe 2× SCFT relax, and SI tables from any run whose status reads *saddle*.
 
-**Screening only:** inverse design (especially contacts and vias), process windows, repair, 3D film, χN ≫ 30, the TMD compact model, and any 2D run whose status reads *open*.
+**Screening only:** inverse design (especially contacts and vias), process windows, repair, 3D film, χN ≫ 30, the TMD compact model, and any 2D run whose status reads *open*. At present that includes SCFT relax for every published recipe except LiNe 2× (see the per-recipe table in [`docs/VALIDATION.md`](docs/VALIDATION.md)).
 
 The AFM / TEM / SEM view buttons only change how the field is coloured. They are not a microscope or metrology model. This bench is not PSCF, not a CD-SEM model, and does not reproduce the blend / 3D inverse loop of Zhou et al.
 
@@ -120,3 +122,7 @@ If you use this bench in academic work, please cite it using the metadata in [`C
 - Snoek, Larochelle & Adams, [NeurIPS 2012](https://proceedings.neurips.cc/paper/2012/hash/05311655a15b75fab86956663e1819cd-Abstract.html): practical Bayesian optimisation.
 
 Each recipe in **Notes** lists its own publication.
+
+## License
+
+Released under the [MIT License](LICENSE).
