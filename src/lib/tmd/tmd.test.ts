@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { transferOntoTmd } from "../dsa/tmd-transfer.ts";
 import { tmdById, TMD_MATERIALS, tmdsIn } from "./materials.ts";
 import {
   DEFAULT_BENCH,
@@ -104,6 +105,62 @@ describe("TMD library", () => {
     assert.ok(TMD_MATERIALS.length < 20);
     assert.ok(tmdsIn("research").some((m) => m.id === "hfs2"));
     assert.ok(tmdsIn("research").some((m) => m.id === "ptse2"));
+  });
+});
+
+describe("BCP mask onto a TMD", () => {
+  it("cuts a ribbon inside the published MoS2 window", () => {
+    const r = transferOntoTmd({
+      morphology: "LAM",
+      guideKind: "chemo-lamellar",
+      pitchNm: 28,
+      cdNm: 14,
+      etchLerNm: 1.3,
+      residualNm: 0.4,
+      materialId: "mos2",
+    });
+    assert.equal(r.kind, "ribbon");
+    assert.equal(r.open, true);
+    assert.equal(r.inDemonstratedRange, true);
+    assert.equal(r.featureNm, 14);
+  });
+  it("blocks transfer when the residual skin is thick", () => {
+    const r = transferOntoTmd({
+      morphology: "LAM",
+      guideKind: "chemo-lamellar",
+      pitchNm: 28,
+      cdNm: 14,
+      etchLerNm: 1.3,
+      residualNm: 6,
+      materialId: "mos2",
+    });
+    assert.equal(r.open, false);
+    assert.match(r.label, /blocked/i);
+  });
+  it("does not invent a mask from a disordered field", () => {
+    const r = transferOntoTmd({
+      morphology: "DIS",
+      guideKind: "chemo-lamellar",
+      pitchNm: 28,
+      cdNm: 14,
+      etchLerNm: 1,
+      residualNm: 0,
+      materialId: "mos2",
+    });
+    assert.equal(r.kind, "none");
+  });
+  it("keeps a semimetal as geometry only", () => {
+    const r = transferOntoTmd({
+      morphology: "LAM",
+      guideKind: "chemo-lamellar",
+      pitchNm: 28,
+      cdNm: 14,
+      etchLerNm: 1,
+      residualNm: 0.2,
+      materialId: "wte2",
+    });
+    assert.equal(r.logicChannel, false);
+    assert.equal(r.inDemonstratedRange, false);
   });
 });
 

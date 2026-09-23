@@ -3,7 +3,7 @@ import { DEFAULT_CONFIG, type SimConfig } from "@/lib/dsa/types";
 import type { FieldLook } from "@/lib/dsa/looks";
 
 export type LabId = "dsa" | "tmd";
-export type DsaTab = "assemble" | "window" | "repair" | "inverse" | "theory";
+export type DsaTab = "assemble" | "window" | "repair" | "inverse" | "transfer" | "theory";
 export type TmdTab = "bench" | "materials" | "context";
 
 export type Persisted = {
@@ -21,7 +21,7 @@ export type Persisted = {
 const KEY = "dsa-bench-local-v8";
 
 const TMD_TABS: TmdTab[] = ["bench", "materials", "context"];
-const DSA_TABS: DsaTab[] = ["assemble", "window", "repair", "inverse", "theory"];
+const DSA_TABS: DsaTab[] = ["assemble", "window", "repair", "inverse", "transfer", "theory"];
 const LOOKS: FieldLook[] = ["paper", "afm", "tem", "etch"];
 
 export const DEFAULT_PERSIST: Persisted = {

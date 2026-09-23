@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Pause, Play, RotateCcw, Download, Search, Menu, X, LayoutGrid, Columns3, Hammer, Crosshair, BookOpen, Cpu, FlaskConical, Info } from "lucide-react";
+import { Pause, Play, RotateCcw, Download, Search, Menu, X, LayoutGrid, Columns3, Hammer, Crosshair, BookOpen, Cpu, FlaskConical, Info, Layers } from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -53,6 +53,7 @@ import { scftSiCsv, scftSiPayload } from "@/lib/dsa/si";
 import { colorizePhi, familyFromMaterial, niceScaleBarNm, overlayRgba, paletteFor, type FieldLook } from "@/lib/dsa/looks";
 import type { BlendPath, FramePayload, GuideKind, SimConfig, TemplateDefect } from "@/lib/dsa/types";
 import { cn } from "@/lib/utils";
+import { TmdTransferPanel } from "@/components/tmd-transfer-panel";
 import { ExplainLayer } from "@/components/explain";
 
 type Tab = DsaTab;
@@ -453,7 +454,9 @@ export function Workbench() {
           ? "Repairability"
           : tab === "inverse"
             ? "Inverse search"
-            : tab === "theory"
+            : tab === "transfer"
+              ? "Onto TMD"
+              : tab === "theory"
               ? "Solver model"
               : (recipe?.title ?? "Chamber");
   const crumb = lab === "tmd" ? "TMD FET" : "Patterning";
@@ -505,6 +508,7 @@ export function Workbench() {
               ["window", "Window", Columns3, "Sweep CD/L0, overlay, dose, or χN. Colour is defect, repair, or rectification."],
               ["repair", "Repair", Hammer, "Template defects (missing stripe, stitch) and whether the film heals them."],
               ["inverse", "Inverse", Crosshair, "Optimize guide parameters with a Gaussian process and 2D SCFT."],
+              ["transfer", "Onto TMD", Layers, "Cut the polymer mask into a TMD sheet. The sheet does not self-assemble."],
               ["theory", "Model", BookOpen, "Spectral OK + SCFT methods, residuals, Matsen D*."],
             ] as const
           ).map(([id, label, Icon, explain]) => (
@@ -522,7 +526,7 @@ export function Workbench() {
         </nav>
         <p className="mt-6 px-2 pb-2 text-xs uppercase tracking-[0.16em] text-muted">TMD FET</p>
         <p className="px-2 pb-2 text-xs leading-relaxed text-muted">
-          Transistor stack. Separate from DSA patterning.
+          Transistor numbers. The mask that cuts the sheet is under Onto TMD.
         </p>
         <nav className="flex flex-col gap-1">
           {(
@@ -623,6 +627,15 @@ export function Workbench() {
             applyPreset(id);
             goDsa("assemble");
           }}
+        />
+      ) : tab === "transfer" ? (
+        <TmdTransferPanel
+          metrics={frame?.metrics ?? null}
+          guideKind={config.guide.kind}
+          pitchNm={config.L0Nm}
+          cdNm={config.guide.cdNm > 0 ? config.guide.cdNm : config.L0Nm * 0.5}
+          bench={bench}
+          onBench={setBench}
         />
       ) : tab === "theory" ? (
         <Theory />
