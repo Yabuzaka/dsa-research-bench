@@ -36,23 +36,50 @@ The reference is read from a published figure, so it carries a digitisation unce
 
 > **Note on the tests.** `runScft1d` sets the cell length equal to the reference period, so the assertion *"1D lamellar D/Rg tracks Matsen at χN=20"* compares that value with itself and cannot fail. The meaningful check is the F(D) minimisation above, which is asserted separately (within 5 %). Tightening that assertion to about 1 % would make the test reflect the real accuracy.
 
-## 2D LiNe 2× (default Chamber recipe)
+## 2D SCFT relax across the Chamber recipes
 
-Settings used by **SCFT relax** in the app: 64 × 64 grid, 56 contour steps, 160 iterations, χN = 18.5, L0 = 28 nm, chemo-lamellar guide with Ls = 56 nm.
+Each recipe was relaxed with the exact settings the **SCFT relax** button uses: 64 × 64 grid, 56 contour steps and up to 160 iterations for guided cells (48 steps and 120 iterations for unguided hexagonal cells, 48 iterations for unguided lamellae). The app labels a run **saddle** when ‖w − w[φ]‖ < 5×10⁻³ and the incompressibility error is below 8×10⁻³; the stricter methods-grade target used here is 5×10⁻⁴.
+
+### Default recipe: LiNe 2× (`line-2x`)
+
+χN = 18.5, L0 = 28 nm, chemo-lamellar guide with Ls = 56 nm, guide strength 1.15.
 
 | Quantity | Value |
 |---|---|
-| Free energy F/nkT | 3.8445 |
+| Free energy F/nkT | 3.8449 |
 | ΔF vs 1D bulk | +0.006 |
-| Registration with guide | 22.7 % |
-| Incompressibility error | 7.1×10⁻⁵ |
-| Exchange-field residual ‖w − w[φ]‖ | **5.8×10⁻³** |
-| Saddle threshold used by the app | 5×10⁻³ |
-| Status | **open (not converged)** |
+| Exchange-field residual ‖w − w[φ]‖ | 1.1×10⁻⁴ |
+| Incompressibility error | 3.9×10⁻⁴ |
+| Registration with guide | 22.8 % |
+| Iterations | 121 (stopped on convergence) |
+| Status | ✅ saddle, methods-grade |
 
-The free energy and registration are consistent with the 1D solution. However, the exchange-field residual stops just above the app's own saddle threshold after 160 iterations. Two different residuals exist in the code: the density-change residual (7.5×10⁻⁵) and the exchange-field residual (5.8×10⁻³). The SI export reports the exchange-field residual, which is the stricter one.
+### All recipes
 
-**Until this run reaches the saddle threshold, 2D LiNe results should be treated as screening, not methods-grade.** Possible fixes: raise the iteration cap for guided cells, or continue Anderson mixing once the density residual has plateaued.
+| Recipe | Type | Iterations | Field residual ‖w − w[φ]‖ | Status |
+|---|---|---:|---:|---|
+| LiNe 2× lamellae (`line-2x`) | guided lamellar | 121 | 1.1×10⁻⁴ | ✅ saddle |
+| 3× pitch multiplication (`line-3x`) | guided lamellar | 160 | 1.4×10⁻² | ⚠️ open |
+| High-χ 11 nm metal (`highchi-metal`) | guided lamellar | 160 | 2.4×10¹ | ⚠️ open |
+| Via / contact hex (`via-hex`) | hexagonal | 160 | 2.9×10⁻¹ | ⚠️ open |
+| Grapho fin trenches (`grapho-fins`) | guided lamellar | 160 | 2.0 | ⚠️ open |
+| Untemplated quench (`untemplated`) | unguided | 1 | 2.5×10⁻⁴ | ✅ saddle |
+| EUV + DSA rectification (`euv-rectify`) | guided lamellar | 160 | 1.7×10⁻² | ⚠️ open |
+| 24 nm 1:1, no CD trim (`euv-24-1to1`) | guided lamellar | 160 | 6.2×10⁻¹ | ⚠️ open |
+| imec P24 L/S after etch (`imec-p24`) | guided lamellar | 160 | 6.6×10⁻¹ | ⚠️ open |
+| Hex contact LCDU (`hex-contact-lcdu`) | hexagonal | 4 | 6.5×10² | ⚠️ diverged |
+| VIA peanut pair (`via-pair`) | hexagonal | 160 | 1.4×10⁻¹ | ⚠️ open |
+| P4ClS 7× 7.5 nm (`p4cls-7x`) | guided lamellar | 160 | 1.2×10⁻¹ | ⚠️ open |
+| Maekawa 3× sub-10 nm (`maekawa-3x`) | guided lamellar | 160 | 1.4×10⁻¹ | ⚠️ open |
+| High-NA 24 nm pitch (`highna-24`) | guided lamellar | 160 | 4.4×10⁻¹ | ⚠️ open |
+| High-χ kinetic trap (`kinetic-trap`) | guided lamellar | 160 | 2.5×10¹ | ⚠️ open |
+| Microwave 4× PS-PMMA (`microwave-4x`) | guided lamellar | 160 | 2.1×10⁻² | ⚠️ open |
+| Missing-stripe repair (`missing-line`) | guided lamellar | 160 | 6.1×10⁻³ | ⚠️ open |
+| High-NA stitch seam (`stitch-seam`) | guided lamellar | 160 | 6.4×10⁻¹ | ⚠️ open |
+
+**Only the default LiNe 2× recipe and the unguided reference reach the saddle.** The other 16 recipes stop at the iteration cap with residuals between 6×10⁻³ and 25, and the hexagonal contact recipe diverges after four iterations. Their free energies and registration values are therefore not equilibrium results. Treat SCFT relax output for those recipes as screening until the solver reaches the saddle for them.
+
+Raising the iteration cap alone does not fix this. Going from 160 to 400 iterations lowers the residual only two to three times (`line-3x` 1.4×10⁻² → 5.5×10⁻³, `microwave-4x` 2.1×10⁻² → 9.5×10⁻³, `imec-p24` 0.66 → 0.37), and none of them reaches the threshold. Likely causes are the initial guess (the 2D field is extruded from a 1D solution that does not match the guide geometry of most recipes) and an Anderson mixer that resets whenever its coefficients exceed a fixed bound. Improving convergence for the remaining recipes is open work.
 
 ## Inverse design
 
@@ -77,13 +104,13 @@ From the repository root:
 ```sh
 cat > probe.ts <<'TS'
 import { runScft1d, findLamellarPeriod, lamellarDOverRg, runScft } from "./src/lib/dsa/scft.ts";
-import { DEFAULT_CONFIG } from "./src/lib/dsa/types.ts";
+import { PRESETS } from "./src/lib/dsa/presets.ts";
 const r = runScft1d(20, 0.5, { nx: 128, Ns: 80, maxIter: 180, mix: 0.1, nPeriods: 1 });
 console.log("1D", r.F, r.fieldResidual, r.incomp, r.converged);
 const p = findLamellarPeriod(20, 0.5, {});
 console.log("D*", p.periodRg, "ref", lamellarDOverRg(20));
-const s = runScft(DEFAULT_CONFIG, { nx: 64, Ns: 56, maxIter: 160 });
-console.log("2D", s.F, s.bulk.F, s.fieldResidual, s.registration, s.converged);
+const s = runScft(PRESETS[0].config, { nx: 64, Ns: 56, maxIter: 160 });
+console.log("2D", PRESETS[0].id, s.F, s.bulk.F, s.fieldResidual, s.registration, s.iters);
 TS
 node --experimental-strip-types probe.ts && rm probe.ts
 ```
