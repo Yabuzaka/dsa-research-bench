@@ -79,7 +79,7 @@ Reproducible inverse runs are in [`examples/`](examples/).
 
 ## What you can cite vs. what is screening
 
-**Cite, with the residual you printed:** 1D SCFT at χN ≲ 30, the default LiNe 2× SCFT relax, and SI tables from any run whose status reads *saddle*.
+**Cite, with the residual you printed:** 1D SCFT at χN ≤ 20, the default LiNe 2× SCFT relax, and SI tables from any run whose status reads *saddle*. At χN = 25–30 the 1D equilibrium-period solve does not yet converge with the default settings.
 
 **Screening only:** inverse design (especially contacts and vias), process windows, repair, 3D film, χN ≫ 30, the TMD compact model, and any 2D run whose status reads *open*. At present that includes SCFT relax for every published recipe except LiNe 2× (see the per-recipe table in [`docs/VALIDATION.md`](docs/VALIDATION.md)).
 
