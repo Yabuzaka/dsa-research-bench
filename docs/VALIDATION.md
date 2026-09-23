@@ -34,7 +34,20 @@ Grid 128 points, 80 contour steps, up to 180 iterations.
 
 The reference is read from a published figure, so it carries a digitisation uncertainty of roughly 1 %. The agreement above is therefore well within the accuracy of the reference itself.
 
-> **Note on the tests.** `runScft1d` sets the cell length equal to the reference period, so the assertion *"1D lamellar D/Rg tracks Matsen at χN=20"* compares that value with itself and cannot fail. The meaningful check is the F(D) minimisation above, which is asserted separately (within 5 %). Tightening that assertion to about 1 % would make the test reflect the real accuracy.
+### Period across χN
+
+Full F(D) sweep (7 cell sizes, parabolic fit, re-solve at D*):
+
+| χN | D*/Rg | Reference | Difference | Field residual at D* |
+|---:|---:|---:|---:|---:|
+| 15 | 3.712 | 3.650 | 1.7 % | 2.0×10⁻⁵ ✅ |
+| 20 | 4.043 | 4.044 | 0.02 % | 1.9×10⁻⁵ ✅ |
+| 25 | 4.277 | 4.355 | 1.8 % | 1.7×10⁻² ⚠️ |
+| 30 | 4.479 | 4.617 | 3.0 % | 2.0×10⁻¹ ⚠️ |
+
+At χN = 15 and 20 the solve converges; the 1.7 % gap at χN = 15 is of the order of the digitisation uncertainty of the reference curve. At χN = 25 and 30 the re-solve at D* does not converge with the default iteration budget, so those periods should be treated as estimates.
+
+> **Note on the tests.** `runScft1d` sets the cell length equal to the reference period, so a period assertion on its output cannot fail. The suite therefore checks the period only through the F(D) minimisation, with a tolerance of 0.5 % at χN = 20.
 
 ## 2D SCFT relax across the Chamber recipes
 
