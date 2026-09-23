@@ -347,17 +347,17 @@ describe("run verdict", () => {
 });
 
 describe("spectral SCFT", () => {
-  it("1D lamellar D/Rg tracks Matsen at χN=20", () => {
+  it("1D lamellar saddle at χN=20 matches the Matsen free energy", () => {
+    // The cell length here is set to the Matsen period, so periodRg equals it by
+    // construction and is not asserted. The independent period check is the
+    // F(D) minimisation in the next test.
     const r = runScft1d(20, 0.5, { nx: 128, Ns: 80, maxIter: 180, mix: 0.1, nPeriods: 1 });
-    const target = lamellarDOverRg(20);
-    const rel = Math.abs(r.periodRg - target) / target;
     assert.ok(r.Q > 1e-20 && Number.isFinite(r.Q), `Q ${r.Q}`);
     assert.ok(r.F < r.Fhom - 0.5, `F ${r.F} vs Fhom ${r.Fhom}`);
     assert.ok(r.F > 3.93 && r.F < 4.04, `F ${r.F} literature ~3.98`);
     assert.ok(Math.abs(r.meanA - 0.5) < 0.02, `meanA ${r.meanA}`);
     assert.ok(r.incomp < 5e-4, `incomp ${r.incomp}`);
     assert.ok(r.fieldResidual < 5e-4, `residual ${r.fieldResidual}`);
-    assert.ok(rel < 0.03, `D/Rg ${r.periodRg} vs Matsen ${target}`);
     assert.ok(r.converged, "1D should converge");
   });
   it("F(D) minimum sits on the Matsen period", () => {
@@ -367,7 +367,8 @@ describe("spectral SCFT", () => {
     const fs = r.fdCurve.filter((p) => Number.isFinite(p.F)).map((p) => p.F);
     const minF = Math.min(...fs);
     assert.ok(r.F <= minF + 0.02, `F* ${r.F} vs min ${minF}`);
-    assert.ok(Math.abs(r.periodRg - target) / target < 0.05, `D* ${r.periodRg} vs ${target}`);
+    // Measured agreement is about 0.1 % (quick sweep); allow 0.5 %.
+    assert.ok(Math.abs(r.periodRg - target) / target < 0.005, `D* ${r.periodRg} vs ${target}`);
     assert.ok(r.F < r.Fhom - 0.5, `F ${r.F} Fhom ${r.Fhom}`);
     assert.ok(r.fieldResidual < 0.05, `res ${r.fieldResidual}`);
   });
